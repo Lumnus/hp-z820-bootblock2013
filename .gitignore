@@ -1,0 +1,13 @@
+# never commit firmware, dumps or downloaded third-party files
+*.bin
+*.BIN
+*.rom
+*.img
+*.exe
+*.EXE
+*.zip
+*.tgz
+*.com
+*.COM
+__pycache__/
+*.pyc
