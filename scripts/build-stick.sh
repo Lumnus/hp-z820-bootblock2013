@@ -25,10 +25,10 @@ read -r -p "ERASE $DEV ($ID)? type YES: " ok; [ "$ok" = YES ] || exit 1
 
 for p in "$DEV"?*; do umount "$p" 2>/dev/null || true; done
 dd if="$W/FD14LITE.img" of="$DEV" bs=4M conv=fsync status=none
-blockdev --rereadpt "$DEV"; sleep 2
+udevadm settle; blockdev --rereadpt "$DEV"; udevadm settle
 END=$(sfdisk -l -o End "$DEV" | tail -1 | tr -d ' ')
 echo "start=$((END + 2048)), type=c" | sfdisk -a -q "$DEV"
-blockdev --rereadpt "$DEV"; sleep 2
+udevadm settle; blockdev --rereadpt "$DEV"; udevadm settle
 P2=$(lsblk -lnpo NAME "$DEV" | sed -n 3p)
 mkfs.vfat -F 32 -n Z820BB "$P2" >/dev/null
 M=$(mktemp -d); mount -t vfat "$P2" "$M"

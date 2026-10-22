@@ -42,6 +42,8 @@ get $HP/sp100001-100500/sp100128.tgz dl/sp100128.tgz md5 30a759d6d99eca3a932acbd
 # HP Workstations ME Firmware Update 8.1.10.1286 (contains MEBLAST.com)
 get $HP/sp59501-60000/sp59993.exe   dl/sp59993.exe  md5 3e65d5b37d44a82503063c2432bf2933
 # FreeDOS 1.4 LiteUSB, sha256 per freedos verify.txt
+# ibiblio has answered 503 for hours at a time; freedos.org serves the same file. Either way the hash decides.
+[ -f dl/FD14-LiteUSB.zip ] || curl -sSfL -o dl/FD14-LiteUSB.zip https://download.freedos.org/1.4/FD14-LiteUSB.zip || rm -f dl/FD14-LiteUSB.zip
 get https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/distributions/1.4/FD14-LiteUSB.zip \
     dl/FD14-LiteUSB.zip sha256 857dcd2ebf9d3d094320154db5fb5b830acba6fb98f981a95a0ca7ab3350338b
 # Intel Flash Programming Tool, as bundled in bibikalka1's IMET8.zip (only fpt.exe is used)
@@ -57,6 +59,10 @@ unzip -oq dl/IMET8.zip -d x/imet8
 FPT=$(find x/imet8 -name fpt.exe | head -1)
 echo "52ac5906e78358c10aec03844716b668ed2945918fc3fecbc2f6decec4d72e2d  $FPT" | sha256sum -c --quiet
 echo "ok  fpt.exe"
+# fpt loads its flash-part list from fparts.txt next to fpt.exe; without it every fpt call fails (Error 75)
+FPARTS=$(dirname "$FPT")/fparts.txt
+echo "1167c7a63abee1d28556b5e7a42e9b4202dac8315eb6a183ebdc7f4341b85bc7  $FPARTS" | sha256sum -c --quiet
+echo "ok  fparts.txt"
 
 B396=$(find x/sp100128 -name 'J63_0396.bin' | head -1)
 echo "90ee92922a781390d604ded1f8656003  $B396" | md5sum -c --quiet
@@ -67,7 +73,7 @@ echo "f539d456b792594bc3ca59d4e0f4c23d4f1fee73370c1390b2da245400718d36  x/freedo
 
 P=$W/payload; rm -rf "$P"; mkdir -p "$P"/{TOOLS,MEBLAST,V207,V396}
 cp "$HERE"/stick/STAGE1.BAT "$HERE"/stick/STAGE2.BAT "$P"/
-cp "$HERE"/stick/SNAPSHOT.BAT "$FPT" "$P"/TOOLS/
+cp "$HERE"/stick/SNAPSHOT.BAT "$FPT" "$FPARTS" "$P"/TOOLS/
 tail -c 65536 "$B396" > "$P"/TOOLS/BB2013.BIN
 echo "710063142bc456314ba3da04976e9ee8814b8448993d6ba851b70c5011e3ba3f  $P/TOOLS/BB2013.BIN" | sha256sum -c --quiet
 cp "$MEB" "$P"/MEBLAST/MEBLAST.COM

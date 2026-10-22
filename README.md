@@ -20,7 +20,13 @@ This repository does not invent the method. It packages it:
 
 ## Status — read this
 
-* **Tested once, on one board:** HP Z820, assembly **618266-002** (SP# 708464-001),
+* **Tested on two boards.** Second run 2026-10-22: HP Z820 618266-002-class, PCB 1.01, BIOS 03.96,
+  ME 8.1.10, 2× E5-2660 (v1), Quadro M4000 (set the video slot's option ROM to **legacy** in F10, or the
+  DOS stick runs with a black screen). `verify.py` → RESULT: OK. That run found and fixed three bugs:
+  `fparts.txt` was not copied next to `fpt.exe` (every `fpt` call failed), the batch files did not stop on a
+  missing snapshot, and `build-stick.sh` raced udev. The batch files now stop before flashing anything
+  if snapshot 11 is missing, and refuse to start if a snapshot 11 from an earlier run is still on the stick.
+* **First run:** HP Z820, assembly **618266-002** (SP# 708464-001),
   PCB rev 1.01, BIOS 03.96, ME 8.1.10 already installed, 2× Xeon E5-2640 (v1),
   2026-10-19. Result verified on the chip: boot block went from
   `CRTM J63 v00.71, 12/28/2011` to `CRTM J63 v03.04, 03/06/2013`, byte-identical to
